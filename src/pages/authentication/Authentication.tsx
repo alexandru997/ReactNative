@@ -1,14 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import WebView from "react-native-webview";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {VIEW_LOGIN_BTN_ID, VIEW_LOGIN_ID} from "./constants";
 import SplashScreen from "react-native-splash-screen";
-import {SafeAreaView} from "react-native";
 
 const Authentication = () => {
     const webview = useRef();
 
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<any>({login: '', password: ''});
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -22,7 +20,7 @@ const Authentication = () => {
         getData()
     }, []);
 
-    const storeData = async (user: any) => {
+    const storeData = async (user: { login: string, password: string }) => {
         try {
             await AsyncStorage.setItem("user", JSON.stringify(user))
             getData()
@@ -32,40 +30,57 @@ const Authentication = () => {
     }
 
     const getData = async () => {
+        // try {
+        //     await AsyncStorage.removeItem("user");
+        //     return true;
+        // }
+        // catch(exception) {
+        //     return false;
+        // }
         try {
             const value = await AsyncStorage.getItem("user");
+            const currentUser = JSON.parse(value as any)
             if (value !== null) {
-                setUser(value)
+                setUser(currentUser)
             }
         } catch (error) {
+            console.log('error')
         }
     };
 
     const onMessage = (event: any) => {
+        console.log('+')
         const res = JSON.parse(event.nativeEvent.data);
         if (res.message === 'ok') {
-            !user && storeData({login: 'asobol', password: '12345'})
+            storeData({login: res.login, password: res.password})
         }
     }
-
     const jsCode = `
-    document.getElementsByName(${VIEW_LOGIN_ID}).value = "My value";
-    document.getElementById(${VIEW_LOGIN_BTN_ID}).addEventListener("click", function() {  
-    window.ReactNativeWebView.postMessage(JSON.stringify({type: "click", message : "ok"}));
-}); 
-true;`;
+    document.getElementById('username').value = '${user.login}';
+    document.getElementById('password').children[0].value = '${user.password}';
+ 
+  if(${user.login.length !== 0} && ${user.password.length !== 0}) { document.getElementById('kc-login').click();
+}
+
+    document.getElementById('kc-login').addEventListener("click", function() {
+    window.ReactNativeWebView.postMessage(JSON.stringify({type: "click", message : "ok", 
+    login: document.getElementById('username').value, 
+    password: document.getElementById('password').children[0].value}));
+});
+true;
+`;
 
     return (
 
-            <WebView
-                // @ts-ignore
-                ref={webview}
-                source={{uri: 'http://senseit-test.orange.md'}}
-                originWhitelist={['*']}
-                javaScriptEnabledAndroid={true}
-                injectedJavaScript={jsCode}
-                onMessage={onMessage}
-            />
+        <WebView
+            // @ts-ignore
+            ref={webview}
+            source={{uri: 'http://senseit-test.orange.md'}}
+            originWhitelist={['*']}
+            javaScriptEnabledAndroid={true}
+            injectedJavaScript={jsCode}
+            onMessage={onMessage}
+        />
     );
 };
 
