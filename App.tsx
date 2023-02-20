@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import Authentication from "./src/pages/authentication/Authentication";
+import React, {useEffect} from 'react';
 import Home from "./src/pages/Home";
+import SplashScreen from "react-native-splash-screen";
 
 function App(): JSX.Element {
     // const [showWebView, setShowWebView] = useState<boolean>(true);
@@ -12,9 +12,17 @@ function App(): JSX.Element {
     //     return () => clearTimeout(timer);
     // }, []);
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            SplashScreen.hide();
+        }, 4000);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <>
-            <Authentication/>
+            <Home />
+            {/*<Authentication/>*/}
             {/*{showWebView*/}
             {/*    ? <Authentication/>*/}
             {/*    : <Home/>*/}
