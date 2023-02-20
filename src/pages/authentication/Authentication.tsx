@@ -1,19 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react';
 import WebView from "react-native-webview";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SplashScreen from "react-native-splash-screen";
 
 const Authentication = () => {
     const webview = useRef();
 
     const [user, setUser] = useState<any>({login: '', password: ''});
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            SplashScreen.hide();
-        }, 4000);
-        return () => clearTimeout(timer);
-    }, []);
+    // useEffect(() => {
+    //     const timer = setTimeout(() => {
+    //         SplashScreen.hide();
+    //     }, 4000);
+    //     return () => clearTimeout(timer);
+    // }, []);
 
 
     useEffect(() => {
